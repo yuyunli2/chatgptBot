@@ -1,6 +1,7 @@
 package com.tencent.wxcloudrun.controller;
 
 import com.tencent.wxcloudrun.dto.ChatRequest;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * index控制器
@@ -27,10 +29,9 @@ public class IndexController {
   }
 
   @PostMapping
-  public void chat(@RequestBody ChatRequest request, HttpServletResponse response) throws IOException {
-    String content = request.getContent();
-    System.out.println("content: " + content);
-    response.getWriter().write("it's response, get conent: " + content);
+  public void chat(@RequestBody Map<String, Object> map, HttpServletResponse response) throws IOException {
+    System.out.println(map);
+    response.getWriter().write("it's response, get map: " + map);
   }
 
 }
