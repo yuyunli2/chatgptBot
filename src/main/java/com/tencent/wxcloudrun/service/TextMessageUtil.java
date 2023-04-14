@@ -19,7 +19,7 @@ public class TextMessageUtil implements BaseMessageUtil<TextMessage> {
         TextMessage text = new TextMessage();
         text.setToUserName(FromUserName);
         text.setFromUserName(ToUserName);
-        text.setContent("您输入的内容是：" + Content);
+        text.setContent(Content);
         text.setCreateTime(System.currentTimeMillis());
         text.setMsgType("text");
         return messageToxml(text);
