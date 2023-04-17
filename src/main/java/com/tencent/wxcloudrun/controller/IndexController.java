@@ -1,7 +1,9 @@
 package com.tencent.wxcloudrun.controller;
 
+import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.JSONArray;
+import com.tencent.wxcloudrun.service.HttpRequest;
 import com.tencent.wxcloudrun.service.MessageUtil;
 import com.tencent.wxcloudrun.service.TextMessageUtil;
 import org.springframework.http.HttpEntity;
@@ -48,9 +50,22 @@ public class IndexController {
     System.out.println("map: " + map);
     String message = null;
     if("text".equals(MsgType)){
-      TextMessageUtil textMessage = new TextMessageUtil();
-      message = textMessage.initMessage(FromUserName, ToUserName,sendPost(Content));
-      response.getWriter().write(message);
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            postMessage(FromUserName, "这是从微信接口调用的信息");
+          } catch (Exception e) {
+            System.out.println(e);
+            e.printStackTrace();
+            throw new RuntimeException(e);
+          }
+        }
+      }).start();
+//        TextMessageUtil textMessage = new TextMessageUtil();
+//        String message = textMessage.initMessage(FromUserName, ToUserName,sendPost(Content));
+//        response.getWriter().write(message);
+      response.getWriter().write("");
     }
   }
 
@@ -91,5 +106,23 @@ public class IndexController {
     JSONArray choices = jsonObject.getJSONArray("choices");
     JSONObject message = (JSONObject) choices.getJSONObject(0).get("message");
     String content = (String) message.get("content");
+  }
+
+  public void postMessage(String openid,String content) throws Exception {
+    //消息推送接口
+    String path = "https://api.weixin.qq.com/cgi-bin/message/custom/send";
+    JSONObject jsonData = new JSONObject();
+    jsonData.put("touser", openid);
+    jsonData.put("msgtype", "text");
+    JSONObject text = new JSONObject();
+    text.put("content",content);
+    jsonData.put("text",text);
+    System.out.println(jsonData);
+    System.out.println(path);
+    //HttpUtil.doPostJson(path, jsonData.toJSONString());
+    String res = HttpRequest.sendPost(path, jsonData.toJSONString());
+    System.out.println(res);
+//    return "SUCCESS";
+    //return null;
   }
 }
